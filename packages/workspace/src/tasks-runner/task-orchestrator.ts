@@ -127,7 +127,7 @@ export class TaskOrchestrator {
   private pipeOutputCapture(task: Task) {
     try {
       const p = this.projectGraph.nodes[task.target.project];
-      const b = p.data.architect[task.target.target].builder;
+      const b = p.data.targets[task.target.target].executor;
       // this is temporary. we simply want to assess if pipeOutputCapture
       // works well before making it configurable
       return (

@@ -14,7 +14,7 @@ import {
   findProjectUsingImport,
   findSourceProject,
   getSourceFilePath,
-  hasArchitectBuildBuilder,
+  hasBuildExecutor,
   hasNoneOfTheseTags,
   isAbsoluteImportIntoAnotherProject,
   checkCircularPath,
@@ -210,8 +210,8 @@ class EnforceModuleBoundariesWalker extends Lint.RuleWalker {
       targetProject.type === ProjectType.lib
     ) {
       if (
-        hasArchitectBuildBuilder(sourceProject) &&
-        !hasArchitectBuildBuilder(targetProject)
+        hasBuildExecutor(sourceProject) &&
+        !hasBuildExecutor(targetProject)
       ) {
         this.addFailureAt(
           node.getStart(),

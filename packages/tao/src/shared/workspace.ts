@@ -19,6 +19,7 @@ export interface ProjectDefinition {
 
 export interface TargetDefinition {
   options?: any;
+  outputs?: string[];
   configurations?: { [config: string]: any };
   executor: string;
 }

@@ -17,9 +17,9 @@ import { unlinkSync } from 'fs';
 
 function isBuildable(target: string, node: ProjectGraphNode): boolean {
   return (
-    node.data.architect &&
-    node.data.architect[target] &&
-    node.data.architect[target].builder !== ''
+    node.data.target &&
+    node.data.target[target] &&
+    node.data.target[target].executor !== ''
   );
 }
 
