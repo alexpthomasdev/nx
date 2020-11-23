@@ -66,8 +66,8 @@ export class Workspaces {
     return w;
   }
 
-  isNxExecutor(target: TargetDefinition) {
-    const schema = this.readExecutor(target).schema;
+  isNxExecutor(nodeModule: string, executor: string) {
+    const schema = this.readExecutor(nodeModule, executor).schema;
     return schema['cli'] === 'nx';
   }
 
@@ -76,22 +76,27 @@ export class Workspaces {
     return schema['cli'] === 'nx';
   }
 
-  readExecutor(target: TargetDefinition) {
+  readExecutor(nodeModule: string, executor: string) {
     try {
-      const {
-        executor,
-        executorsFilePath,
-        executorsJson,
-      } = this.readExecutorsJson(target);
+      const { executorsFilePath, executorsJson } = this.readExecutorsJson(
+        nodeModule,
+        executor
+      );
       const executorsDir = path.dirname(executorsFilePath);
-      const executorConfig = executorsJson.executors[executor] || executorsJson.builders[executor];
+      const executorConfig =
+        executorsJson.executors[executor] || executorsJson.builders[executor];
       const schemaPath = path.join(executorsDir, executorConfig.schema || '');
       const schema = JSON.parse(fs.readFileSync(schemaPath).toString());
-      const module = require(path.join(executorsDir, executorConfig.implementation));
+      const module = require(path.join(
+        executorsDir,
+        executorConfig.implementation
+      ));
       const implementation = module.default;
       return { schema, implementation };
     } catch (e) {
-      throw new Error(`Unable to resolve ${target.executor}.\n${e.message}`);
+      throw new Error(
+        `Unable to resolve ${nodeModule}:${executor}.\n${e.message}`
+      );
     }
   }
 
@@ -122,23 +127,27 @@ export class Workspaces {
     }
   }
 
-  private readExecutorsJson(target: TargetDefinition) {
-    const [nodeModule, executor] = target.executor.split(':');
+  private readExecutorsJson(nodeModule: string, executor: string) {
     const packageJsonPath = require.resolve(`${nodeModule}/package.json`);
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath).toString());
-    const executorsFile = packageJson.executors ? packageJson.executors : packageJson.executors;
+    const executorsFile = packageJson.executors
+      ? packageJson.executors
+      : packageJson.executors;
     const executorsFilePath = require.resolve(
       path.join(path.dirname(packageJsonPath), executorsFile)
     );
     const executorsJson = JSON.parse(
       fs.readFileSync(executorsFilePath).toString()
     );
-    if (!executorsJson.executors[executor] && !executorsJson.builders[executor]) {
+    if (
+      !executorsJson.executors[executor] &&
+      !executorsJson.builders[executor]
+    ) {
       throw new Error(
         `Cannot find executor '${executor}' in ${executorsFilePath}.`
       );
     }
-    return { executor, executorsFilePath, executorsJson };
+    return { executorsFilePath, executorsJson };
   }
 
   private readGeneratorsJson(collectionName: string, generator: string) {

@@ -209,10 +209,7 @@ class EnforceModuleBoundariesWalker extends Lint.RuleWalker {
       sourceProject.type === ProjectType.lib &&
       targetProject.type === ProjectType.lib
     ) {
-      if (
-        hasBuildExecutor(sourceProject) &&
-        !hasBuildExecutor(targetProject)
-      ) {
+      if (hasBuildExecutor(sourceProject) && !hasBuildExecutor(targetProject)) {
         this.addFailureAt(
           node.getStart(),
           node.getWidth(),

@@ -147,8 +147,9 @@ export async function run(root: string, args: string[], isVerbose: boolean) {
     validateTargetAndConfiguration(workspace, opts);
 
     const target = workspace.projects[opts.project].targets[opts.target];
-    if (ws.isNxExecutor(target)) {
-      const { schema, implementation } = ws.readExecutor(target);
+    const [nodeModule, executor] = target.executor.split(':');
+    if (ws.isNxExecutor(nodeModule, executor)) {
+      const { schema, implementation } = ws.readExecutor(nodeModule, executor);
       const combinedOptions = combineOptionsForExecutor(
         opts.runOptions,
         opts.configuration,
